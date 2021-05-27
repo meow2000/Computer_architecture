@@ -70,6 +70,7 @@ modulos:
 li	$a0, 2
 jr 	$ra
 open_parent:
+li 	$a0, 3
 jr 	$ra
 #addi	$t0, $zero, 43 
 In2post: # convert from inFix[] to postFix[]
