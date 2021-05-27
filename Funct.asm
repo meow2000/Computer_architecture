@@ -7,7 +7,7 @@ ReadInput: # read infix
  la 	$a0, input
  li 	$a1, 100
  syscall 
- la 	$t0, input
+ la 	$k0, input
  jr 	$ra
 Push: # push in stack
 # TO DO
@@ -20,6 +20,11 @@ addi	$sp, $sp, 4	# pop
 
 IsDigit: # input : $a0
 	 # output : $a0, $a1 
+lb	$a0, 0($k0)
+beq	$a0, '\n',Calculate
+nop
+blt 	$a0, 48, no
+nop
 addi	$t1, $zero, 48	# $t1 = '0'
 loop:
 addi	$t2, $zero, 57	# $t2 = '9'
@@ -28,15 +33,16 @@ sub	$t0, $t0, $t1	#
 beqz	$t0, yes
 addi	$t1, $t1, 1	# $t1 += 1
 sub	$t2, $t2, $t1	# $t2 -= $t1
-beqz	$t2, no
 j	loop
 no:
+addi	$k0, $k0, 1
 addi	$a1, $zero, 0	# no
-jr	$ra
+j	IsDigit
 yes:
+addi	$k0, $k0, 1
 addi	$a0, $t1, -48	# $a0 = (int) token
 addi	$a1, $zero, 1	# yes 
-jr	$ra
+j	IsDigit
 
 GetPrio: # get priority and save in $a0
 # TO DO
