@@ -40,7 +40,38 @@ jr	$ra
 
 GetPrio: # get priority and save in $a0
 # TO DO
-addi	$t0, $zero, 43 
+beq	$a0, 43, plus # if '+'
+nop
+beq	$a0, 45, subtract # if '-'
+nop
+beq	$a0, 42, time	# tf '*'
+nop
+beq	$a0, 47, divine	#if '/'
+nop
+beq	$a0, 37, modulos	#if '%'
+nop
+beq	$a0, 40, open_parent	#if '('
+nop
+li	$a0, 3	#if isdigit
+jr	$ra
+plus:
+li	$a0, 1
+jr 	$ra
+subtract:
+li	$a0, 1
+jr 	$ra
+time:
+li	$a0, 2
+jr 	$ra
+divine:
+li	$a0, 2
+jr 	$ra
+modulos:
+li	$a0, 2
+jr 	$ra
+open_parent:
+jr 	$ra
+#addi	$t0, $zero, 43 
 In2post: # convert from inFix[] to postFix[]
 # TO DO
 
