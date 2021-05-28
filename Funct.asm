@@ -111,17 +111,23 @@ beqz	$a1, else 	# else
 
 addi	$a2, $a0, 0	# $a2 = inFix[i]
 addi	$s0, $s0, 1	# i++
-add	$t0, $t0, $s0	# inFix[i++]
+addi	$t0, $t0, 1	# inFix[i++]
 lb	$a0, ($t0)	# $a0 = inFix[i+1]
 jal	IsDigit
-beqz	$a1, endif	# end if
+beqz	$a1, endif1	# end if
 li	$t9, 10
 mult	$a2, $t9
+mflo	$a2
 add	$a0, $a0, $a2	# Digit
-sb	$a0, ($t2) 	
 endif:
+sb	$a0, ($t2)
 addi	$s1, $s1, 1	# j++
-add	$t2, $t2, $s1	# postFix[j++]
+addi	$t2, $t2, 1	# postFix[j++]
+j	exit
+endif1:
+subi	$s0, $s0, 1
+subi	$t0, $t0, 1
+sb	$a2, ($t2)
 j	exit
 
 else:			# if == '('
@@ -137,7 +143,7 @@ jal	Pop
 sb	$a1, ($t2)	# 
 
 addi	$s1, $s1, 1	# j++
-add	$t2, $t2, $s1	# postFix[j++]	
+addi	$t2, $t2, 1	# postFix[j++]	
 bne	$a1, $t3, whileLoop
 j	exit
 else2:
@@ -145,6 +151,8 @@ whileLoop1:
 addi	$a2, $a0, 0	# $a2 = token
 jal	GetPrio
 addi	$t3, $a1, 0	# $t3 = Priority(token)
+sub	$t8, $t3, 3
+beqz	$t8, exit
 addi	$a2, $sp, 0
 lw	$a2, ($a2)	# $a2 = stackpointer
 jal	GetPrio
@@ -155,13 +163,13 @@ jal	Pop
 sb	$a1, ($t2)	# 
 
 addi	$s1, $s1, 1	# j++
-add	$t2, $t2, $s1	# postFix[j++]	
+addi	$t2, $t2, 1	# postFix[j++]	
 j	whileLoop1
 exitWhileLoop1:
 jal	Push
 exit:
 addi	$s0, $s0, 1	# i++
-add	$t0, $t0, $s0	# inFix[i++]	
+add	$t0, $t0, 1	# inFix[i++]	
 j	loop1
 back2main:
 jr	$ra
