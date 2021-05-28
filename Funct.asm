@@ -48,7 +48,9 @@ lw	$t3, 12($sp)
 addi	$sp, $sp, 16
 jr	$ra
 yes:
+
 addi	$a0, $a0, -48	# (int) token
+
 addi	$a1, $zero, 1	# yes 
 lw	$t0, 0($sp)
 lw	$t1, 4($sp)	 
@@ -109,6 +111,7 @@ If:
 jal	IsDigit
 beqz	$a1, else 	# else
 
+
 sb	$a0, ($t2)
 addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]
@@ -137,6 +140,7 @@ subi	$t0, $t0, 1
 # addi	$s1, $s1, 1	# j++
 # addi	$t2, $t2, 1	# postFix[j++]
 j	exit
+
 
 else:			# if == '('
 li	$t3, 40		# $t3 = '('
@@ -190,7 +194,9 @@ j	back2main
 back:
 addi	$ra, $t5, 0
 jr	$ra
+
 #----------------------------------------------------------
+
 Calculate: # calculate 
 # TO DO
 add	$k0, $ra,$zero	#save ra
