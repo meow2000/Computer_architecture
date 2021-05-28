@@ -16,11 +16,12 @@ Push: # push in stack
 # TO DO
 sub	$sp, $sp, 4	# add $sp
 sw	$a0, 0($sp)	# push
+jr	$ra
 Pop: # output : $a0
 # TO DO
 lw	$a1, ($sp)	# pop from stack
 addi	$sp, $sp, 4	# pop
-
+jr	$ra
 IsDigit: # input : $a0
 	 # output : $a1 
 subi	$sp, $sp, 16
@@ -71,7 +72,7 @@ beq	$a2, 37, modulos	#if '%'
 nop
 beq	$a2, 40, open_parent	#if '('
 nop
-li	$a1, 3	#if isdigit
+li	$a1, -1	#if isdigit
 jr	$ra
 plus:
 li	$a1, 1
@@ -102,7 +103,6 @@ la	$t0, input	# $t0 = (inFix[0])
 la	$t2, output	# $t2 = (postFix[0])
 addi	$t5, $ra, 0
 loop1:
-addi	$ra, $t5, 0
 lb	$a0, ($t0)	# $a0 = inFix[0]
 beq	$a0, 10,  back2main
 If:
@@ -128,6 +128,8 @@ endif1:
 subi	$s0, $s0, 1
 subi	$t0, $t0, 1
 sb	$a2, ($t2)
+addi	$s1, $s1, 1	# j++
+addi	$t2, $t2, 1	# postFix[j++]
 j	exit
 
 else:			# if == '('
@@ -172,6 +174,15 @@ addi	$s0, $s0, 1	# i++
 add	$t0, $t0, 1	# inFix[i++]	
 j	loop1
 back2main:
+beq	$sp, 0x7fffeffc, back
+jal	Pop
+sb	$a1, ($t2)	# 
+
+addi	$s1, $s1, 1	# j++
+addi	$t2, $t2, 1	# postFix[j++]
+j	back2main
+back:
+addi	$ra, $t5, 0
 jr	$ra
 Calculate: # calculate 
 # TO DO
