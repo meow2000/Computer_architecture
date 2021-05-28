@@ -1,6 +1,6 @@
 .data
 input: .space 100 # Buffer 100 byte chua chuoi ki tu can 
-output: .asciiz "53/"
+output: .space 100
 .text
 ReadInput: # read infix
 # TO DO
@@ -22,7 +22,6 @@ Pop: # output : $a0
 lw	$a1, ($sp)	# pop from stack
 addi	$sp, $sp, 4	# pop
 jr	$ra
-
 IsDigit: # input : $a0
 	 # output : $a1 
 subi	$sp, $sp, 16
@@ -73,7 +72,7 @@ beq	$a2, 37, modulos	#if '%'
 nop
 beq	$a2, 40, open_parent	#if '('
 nop
-li	$a1, 3	#if isdigit
+li	$a1, -1	#if isdigit
 jr	$ra
 plus:
 li	$a1, 1
@@ -104,24 +103,29 @@ la	$t0, input	# $t0 = (inFix[0])
 la	$t2, output	# $t2 = (postFix[0])
 addi	$t5, $ra, 0
 loop1:
-addi	$ra, $t5, 0
 lb	$a0, ($t0)	# $a0 = inFix[0]
 beq	$a0, 10,  back2main
 If:
 jal	IsDigit
 beqz	$a1, else 	# else
 
-addi	$a2, $a0, 0	# $a2 = inFix[i]
+sb	$a0, ($t2)
+addi	$s1, $s1, 1	# j++
+addi	$t2, $t2, 1	# postFix[j++]
+# addi	$a2, $a0, 0	# $a2 = inFix[i]
 addi	$s0, $s0, 1	# i++
 addi	$t0, $t0, 1	# inFix[i++]
 lb	$a0, ($t0)	# $a0 = inFix[i+1]
 jal	IsDigit
 beqz	$a1, endif1	# end if
-li	$t9, 10
-mult	$a2, $t9
-mflo	$a2
-add	$a0, $a0, $a2	# Digit
-endif:
+#li	$t9, 10
+#mult	$a2, $t9
+#mflo	$a2
+#add	$a0, $a0, $a2	# Digit
+sb	$a0, ($t2)
+addi	$s1, $s1, 1	# j++
+addi	$t2, $t2, 1	# postFix[j++]
+li	$a0, 32
 sb	$a0, ($t2)
 addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]
@@ -129,7 +133,9 @@ j	exit
 endif1:
 subi	$s0, $s0, 1
 subi	$t0, $t0, 1
-sb	$a2, ($t2)
+# sb	$a2, ($t2)
+# addi	$s1, $s1, 1	# j++
+# addi	$t2, $t2, 1	# postFix[j++]
 j	exit
 
 else:			# if == '('
@@ -174,16 +180,23 @@ addi	$s0, $s0, 1	# i++
 add	$t0, $t0, 1	# inFix[i++]	
 j	loop1
 back2main:
+beq	$sp, 0x7fffeffc, back
+jal	Pop
+sb	$a1, ($t2)	# 
+
+addi	$s1, $s1, 1	# j++
+addi	$t2, $t2, 1	# postFix[j++]
+j	back2main
+back:
+addi	$ra, $t5, 0
 jr	$ra
-
-
-
+#----------------------------------------------------------
 Calculate: # calculate 
 # TO DO
 add	$k0, $ra,$zero	#save ra
 la	$t0, output	# output
 calWhile:		#while
-lb	$a0, ($t0)
+lb	$a0, 0($t0)
 bne	$a0, '\0', ifCal1
 nop
 jal	Pop
@@ -193,6 +206,10 @@ add	$a0, $a1, $zero
 syscall
 jr	$k0
 ifCal1:
+bgt	$a0, 10, continues
+addi	$a0, $a0, 48
+j	ifCal1
+continues:
 jal	IsDigit
 nop
 beqz	$a1, elseCal1
@@ -216,6 +233,17 @@ beq	$a0, 42, timeCase 	#case *
 nop
 beq	$a0, 47, divineCase 	#case /
 nop
+beq 	$a0, 32, spaceCase	#get 2 number
+nop
+spaceCase:
+li	$k1, 10
+mult	$t2, $k1
+mflo	$t2
+add	$a0, $t2, $t1
+jal	Push
+nop
+add	$t0, $t0, 1
+j	calWhile
 divineCase:
 div	$t2, $t1
 mflo	$t3
@@ -235,3 +263,6 @@ add 	$a0, $t3, $zero
 jal	Push
 add	$t0, $t0, 1
 j	calWhile
+
+
+
