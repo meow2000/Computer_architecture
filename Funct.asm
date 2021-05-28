@@ -125,6 +125,10 @@ beqz	$a1, endif1	# end if
 sb	$a0, ($t2)
 addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]
+li	$a0, 46
+sb	$a0, ($t2)
+addi	$s1, $s1, 1	# j++
+addi	$t2, $t2, 1	# postFix[j++]
 j	exit
 endif1:
 subi	$s0, $s0, 1
