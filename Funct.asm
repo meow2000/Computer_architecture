@@ -47,7 +47,7 @@ lw	$t3, 12($sp)
 addi	$sp, $sp, 16
 jr	$ra
 yes:
-addi	$a0, $a0, -48
+addi	$a0, $a0, -48	# (int) token
 addi	$a1, $zero, 1	# yes 
 lw	$t0, 0($sp)
 lw	$t1, 4($sp)	 
@@ -108,8 +108,18 @@ beq	$a0, 10,  back2main
 If:
 jal	IsDigit
 beqz	$a1, else 	# else
-sb	$a0, ($t2)	# Digit is saved in postFix[j]
 
+addi	$a2, $a0, 0	# $a2 = inFix[i]
+addi	$s0, $s0, 1	# i++
+add	$t0, $t0, $s0	# inFix[i++]
+lb	$a0, ($t0)	# $a0 = inFix[i+1]
+jal	IsDigit
+beqz	$a1, endif	# end if
+li	$t9, 10
+mult	$a2, $t9
+add	$a0, $a0, $a2	# Digit
+sb	$a0, ($t2) 	
+endif:
 addi	$s1, $s1, 1	# j++
 add	$t2, $t2, $s1	# postFix[j++]
 j	exit
