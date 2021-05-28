@@ -48,7 +48,9 @@ lw	$t3, 12($sp)
 addi	$sp, $sp, 16
 jr	$ra
 yes:
-# addi	$a0, $a0, -48	# (int) token
+
+addi	$a0, $a0, -48	# (int) token
+
 addi	$a1, $zero, 1	# yes 
 lw	$t0, 0($sp)
 lw	$t1, 4($sp)	 
@@ -109,6 +111,7 @@ If:
 jal	IsDigit
 beqz	$a1, else 	# else
 
+
 sb	$a0, ($t2)
 addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]
@@ -137,6 +140,7 @@ subi	$t0, $t0, 1
 # addi	$s1, $s1, 1	# j++
 # addi	$t2, $t2, 1	# postFix[j++]
 j	exit
+
 
 else:			# if == '('
 li	$t3, 40		# $t3 = '('
@@ -190,6 +194,81 @@ j	back2main
 back:
 addi	$ra, $t5, 0
 jr	$ra
+
+#----------------------------------------------------------
+
 Calculate: # calculate 
 # TO DO
+add	$k0, $ra,$zero	#save ra
+la	$t0, output	# output
+calWhile:		#while
+lb	$a0, 0($t0)
+bne	$a0, '\0', ifCal1
+nop
+jal	Pop
+nop
+li 	$v0, 36		#print
+add	$a0, $a1, $zero
+syscall
+jr	$k0
+ifCal1:
+bgt	$a0, 10, continues
+addi	$a0, $a0, 48
+j	ifCal1
+continues:
+jal	IsDigit
+nop
+beqz	$a1, elseCal1
+jal	Push		#if digit -> push
+nop
+addi	$t0, $t0, 1
+j 	calWhile
+elseCal1:
+jal	Pop		#get op1
+nop
+add	$t1, $a1, $zero
+jal	Pop		#get op2
+nop
+add	$t2, $a1, $zero
+switchCase:
+beq	$a0, 43, plusCase 	#case +
+nop
+beq	$a0, 45, subtractCase 	#case -
+nop
+beq	$a0, 42, timeCase 	#case *
+nop
+beq	$a0, 47, divineCase 	#case /
+nop
+beq 	$a0, 32, spaceCase	#get 2 number
+nop
+spaceCase:
+li	$k1, 10
+mult	$t2, $k1
+mflo	$t2
+add	$a0, $t2, $t1
+jal	Push
+nop
+add	$t0, $t0, 1
+j	calWhile
+divineCase:
+div	$t2, $t1
+mflo	$t3
+j	endswitch
+plusCase:
+add	$t3, $t1, $t2
+j 	endswitch
+subtractCase:
+sub	$t3, $t2, $t1
+j	endswitch
+timeCase:
+mult	$t1, $t2
+mflo	$t3
+j	endswitch
+endswitch:
+add 	$a0, $t3, $zero
+jal	Push
+add	$t0, $t0, 1
+j	calWhile
+
+
 
