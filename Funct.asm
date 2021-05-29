@@ -74,8 +74,6 @@ addi	$sp, $sp, 16
 jr	$ra
 yes:
 
-# addi	$a0, $a0, -48	# (int) token
-
 addi	$a1, $zero, 1	# yes 
 lw	$t0, 0($sp)
 lw	$t1, 4($sp)	 
@@ -291,5 +289,3 @@ add 	$a0, $t3, $zero
 jal	Push
 add	$t0, $t0, 1
 j	calWhile
-
-
