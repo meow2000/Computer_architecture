@@ -1,15 +1,40 @@
 .data
 input: .space 100 # Buffer 100 byte chua chuoi ki tu can 
 output: .space 100
+linebreak: .asciiz "\n"
+welcome: .asciiz "Enter expression : "
+postfix : .asciiz "postfix : "
+result : .asciiz "result : "
 .text
 ReadInput: # read infix
 # TO DO
+ li 	$v0, 4
+ la 	$a0, welcome
+ syscall 
  li 	$v0, 8
  la 	$a0, input
  li 	$a1, 100
  syscall 
- la 	$t0, input
+ li 	$v0, 4
+ la 	$a0, linebreak
+ syscall 
  jr 	$ra
+ #--------------------------------
+ Print: #Print
+ li 	$v0, 4
+ la 	$a0, postfix
+ syscall 
+ li 	$v0, 4
+ la 	$a0, output
+ li 	$a1, 100
+ syscall 
+  li 	$v0, 4
+ la 	$a0, linebreak
+ syscall
+  li 	$v0, 4
+ la 	$a0, result
+ syscall 
+  jr	$ra
  #--------------------------------
  
 Push: # push in stack
@@ -49,7 +74,7 @@ addi	$sp, $sp, 16
 jr	$ra
 yes:
 
-addi	$a0, $a0, -48	# (int) token
+# addi	$a0, $a0, -48	# (int) token
 
 addi	$a1, $zero, 1	# yes 
 lw	$t0, 0($sp)
@@ -212,13 +237,10 @@ add	$a0, $a1, $zero
 syscall
 jr	$k0
 ifCal1:
-bgt	$a0, 10, continues
-addi	$a0, $a0, 48
-j	ifCal1
-continues:
 jal	IsDigit
 nop
 beqz	$a1, elseCal1
+addi	$a0, $a0, -48 
 jal	Push		#if digit -> push
 nop
 addi	$t0, $t0, 1
@@ -269,6 +291,5 @@ add 	$a0, $t3, $zero
 jal	Push
 add	$t0, $t0, 1
 j	calWhile
-
 
 
