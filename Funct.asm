@@ -19,6 +19,22 @@ ReadInput: # read infix
  li 	$v0, 4
  la 	$a0, linebreak
  syscall 
+ trim:
+ la	$t0, input	# load input
+ rmSpace:
+ lb	$t2, ($t0)
+ beq	$t2, 10, finish
+ beq	$t2, 32, IsSpace
+ addi	$t0, $t0, 1	# index++
+ j	rmSpace
+ IsSpace:
+ lb	$t2, 1($t0)	#
+ sb	$t2, ($t0)	# input[i] = input[i++]
+ sb	$zero, 1($t0)
+ addi	$t0, $t0, 1	# index++
+ beq	$t2, 10, trim 
+ j	IsSpace
+ finish:
  jr 	$ra
  #--------------------------------
  Print: #Print
