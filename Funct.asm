@@ -5,6 +5,7 @@ linebreak: .asciiz "\n"
 welcome: .asciiz "Enter expression : "
 postfix : .asciiz "postfix : "
 result : .asciiz "result : "
+error: .asciiz "Negative, Work in progress ...."
 .text
 ReadInput: # read infix
 # TO DO
@@ -56,7 +57,7 @@ sw	$t2, 8($sp)
 sw	$t3, 12($sp)
 addi	$t1, $zero, 48	# $t1 = '0'
 loop:
-addi	$t2, $zero, 57	# $t2 = '9'
+addi	$t2, $zero, 58	# $t2 = '9'
 addi	$t0, $a0, 0	# $t0 = $a0
 sub	$t0, $t0, $t1	# 
 beqz	$t0, yes
@@ -73,6 +74,8 @@ lw	$t3, 12($sp)
 addi	$sp, $sp, 16
 jr	$ra
 yes:
+
+# addi	$a0, $a0, -48	# (int) token
 
 addi	$a1, $zero, 1	# yes 
 lw	$t0, 0($sp)
@@ -278,8 +281,14 @@ plusCase:
 add	$t3, $t1, $t2
 j 	endswitch
 subtractCase:
-sub	$t3, $t2, $t1
+bgt	$t1, $t2, negv
+subu	$t3, $t2, $t1
 j	endswitch
+negv:
+li 	$v0, 4
+la 	$a0, error
+syscall 
+jr	$k0
 timeCase:
 mult	$t1, $t2
 mflo	$t3
@@ -289,3 +298,5 @@ add 	$a0, $t3, $zero
 jal	Push
 add	$t0, $t0, 1
 j	calWhile
+
+
