@@ -194,12 +194,12 @@ li	$t4, 41		# $t3 = ')'
 bne	$a0, $t4, else2	# else
 whileLoop:
 jal	Pop
+beq	$a1, $t3, exit
 sb	$a1, ($t2)	# 
 
 addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]	
-bne	$a1, $t3, whileLoop
-j	exit
+j	whileLoop
 else2:
 whileLoop1:
 addi	$a2, $a0, 0	# $a2 = token
