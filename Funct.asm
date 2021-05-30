@@ -66,11 +66,12 @@ addi	$sp, $sp, 4	# pop
 jr	$ra
 IsDigit: # input : $a0
 	 # output : $a1 
-subi	$sp, $sp, 16
+subi	$sp, $sp, 16	# Save state of register
 sw	$t0, 0($sp)
 sw	$t1, 4($sp)	 
 sw	$t2, 8($sp)
 sw	$t3, 12($sp)
+
 addi	$t1, $zero, 48	# $t1 = '0'
 loop:
 addi	$t2, $zero, 58	# $t2 = '9'
@@ -87,6 +88,7 @@ lw	$t0, 0($sp)
 lw	$t1, 4($sp)	 
 lw	$t2, 8($sp)
 lw	$t3, 12($sp)
+
 addi	$sp, $sp, 16
 jr	$ra
 yes:
@@ -141,46 +143,35 @@ jr 	$ra
 
 In2Post: # convert from inFix[] to postFix[]
 # TO DO
-li	$s0, 0		# i = 0
-li	$s1, 0		# j = 0
+# li	$s0, 0		# i = 0
+# li	$s1, 0		# j = 0
 la	$t0, input	# $t0 = (inFix[0])
 la	$t2, output	# $t2 = (postFix[0])
 addi	$t5, $ra, 0
 loop1:
 lb	$a0, ($t0)	# $a0 = inFix[0]
 beq	$a0, 10,  back2main
-If:
+If:			# 
 jal	IsDigit
 beqz	$a1, else 	# else
 
 
-sb	$a0, ($t2)
-addi	$s1, $s1, 1	# j++
+sb	$a0, ($t2)	# if(IsDigit)
 addi	$t2, $t2, 1	# postFix[j++]
-# addi	$a2, $a0, 0	# $a2 = inFix[i]
-addi	$s0, $s0, 1	# i++
-addi	$t0, $t0, 1	# inFix[i++]
+addi	$t0, $t0, 1	# inFix[i+1]
 lb	$a0, ($t0)	# $a0 = inFix[i+1]
 jal	IsDigit
-beqz	$a1, endif1	# end if
-#li	$t9, 10
-#mult	$a2, $t9
-#mflo	$a2
-#add	$a0, $a0, $a2	# Digit
-sb	$a0, ($t2)
-addi	$s1, $s1, 1	# j++
+beqz	$a1, endif1	# end if (1 digit number) 
+sb	$a0, ($t2)	# save digit of 2 digit number
 addi	$t2, $t2, 1	# postFix[j++]
-li	$a0, 32
-sb	$a0, ($t2)
-addi	$s1, $s1, 1	# j++
+li	$a0, 32		# add space if it is 2 digit number
+sb	$a0, ($t2)	# save ' ' to output
+# addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]
 j	exit
 endif1:
-subi	$s0, $s0, 1
-subi	$t0, $t0, 1
-# sb	$a2, ($t2)
-# addi	$s1, $s1, 1	# j++
-# addi	$t2, $t2, 1	# postFix[j++]
+# subi	$s0, $s0, 1
+subi	$t0, $t0, 1	
 j	exit
 
 
@@ -197,7 +188,7 @@ jal	Pop
 beq	$a1, $t3, exit
 sb	$a1, ($t2)	# 
 
-addi	$s1, $s1, 1	# j++
+# addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]	
 j	whileLoop
 else2:
@@ -216,21 +207,21 @@ beq	$sp, 0x7fffeffc, exitWhileLoop1
 jal	Pop
 sb	$a1, ($t2)	# 
 
-addi	$s1, $s1, 1	# j++
+# addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]	
 j	whileLoop1
 exitWhileLoop1:
 jal	Push
 exit:
-addi	$s0, $s0, 1	# i++
+# addi	$s0, $s0, 1	# i++
 add	$t0, $t0, 1	# inFix[i++]	
 j	loop1
 back2main:
-beq	$sp, 0x7fffeffc, back
+beq	$sp, 0x7fffeffc, back	
 jal	Pop
 sb	$a1, ($t2)	# 
 
-addi	$s1, $s1, 1	# j++
+# addi	$s1, $s1, 1	# j++
 addi	$t2, $t2, 1	# postFix[j++]
 j	back2main
 back:
