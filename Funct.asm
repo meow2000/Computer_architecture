@@ -240,7 +240,7 @@ bne	$a0, '\0', ifCal1
 nop
 jal	Pop
 nop
-li 	$v0, 36		#print
+li 	$v0, 1		#print
 add	$a0, $a1, $zero
 syscall
 jr	$k0
@@ -288,14 +288,14 @@ plusCase:
 add	$t3, $t1, $t2
 j 	endswitch
 subtractCase:
-bgt	$t1, $t2, negv
-subu	$t3, $t2, $t1
+#bgt	$t1, $t2, negv
+sub	$t3, $t2, $t1
 j	endswitch
-negv:
-li 	$v0, 4
-la 	$a0, error
-syscall 
-jr	$k0
+#negv:
+#li 	$v0, 4
+#la 	$a0, error
+#syscall 
+#jr	$k0
 timeCase:
 mult	$t1, $t2
 mflo	$t3
