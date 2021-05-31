@@ -118,7 +118,7 @@ beq	$a2, 37, modulos	#if '%'
 nop
 beq	$a2, 40, open_parent	#if '('
 nop
-li	$a1, -1	#if isdigit
+li	$a1, 3	#if isdigit
 jr	$ra
 plus:
 li	$a1, 1
